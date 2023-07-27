@@ -2,6 +2,8 @@
 include './db_connect/connect.php';
 $user_id = $_GET['user_id'];
 include('./layout/login_check.php');
+
+echo $user_id;
 ?>
 
 <!doctype html>
@@ -45,76 +47,74 @@ include('./layout/login_check.php');
             </form>
             <form method="POST" action="logout.php">
                 <!-- Your other form elements -->
-                <button type="submit" name="logout" class="btn btn-primary ms-3">Logout</button>
+                <button type="submit" name="logout" class="btn btn-primary ms-3" style="float: right;">Logout</button>
             </form>
         </div>
 
-        <div class="container">
-            <ul>
-                <?php
-                $req1 = "SELECT * FROM notes";
-                $run1 = mysqli_query($conn, $req1);
-                $count = mysqli_num_rows($run1);
+        <div class="container" class="mt-5">
+            <?php
+            $req1 = "SELECT * FROM notes WHERE user_id=$user_id";
+            $run1 = mysqli_query($conn, $req1);
+            $count = mysqli_num_rows($run1);
 
-                $count1 = 1;
+            $count1 = 1;
 
-                if ($count > 0) {
-                    ?>
-                    <table class="table container-xxl table-bordered">
-                        <thead>
-                            <tr align="center">
-                                <th scope="col">S.No.</th>
-                                <th scope="col">Notes</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            while ($row1 = mysqli_fetch_assoc($run1)) {
-                                ?>
-
-                                <tr>
-                                    <th scope="row" style="width: 10%; text-align: center;">
-                                        <?php echo $count1 ?>
-                                    </th>
-
-                                    <td style="width: 70%">
-                                        <?php echo $row1['note'] ?>
-                                    </td>
-
-                                    <td style="width: 20%">
-                                        <form method="POST" action="" align="center">
-                                            <input type="hidden" name="note_id" value="<?php echo $row1['id']; ?>">
-                                            <button type="submit" name="update" class="btn btn-secondary"><i
-                                                    class="fa-solid fa-pen"></i></button>
-                                            <button type="submit" name="delete" class="btn btn-danger"><i
-                                                    class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </td>
-
-                                </tr>
-                                <?php
-                                $count1++;
-                            }
+            if ($count > 0) {
+                ?>
+                <table class="table container-xxl table-bordered">
+                    <thead>
+                        <tr align="center">
+                            <th scope="col">S.No.</th>
+                            <th scope="col">Notes</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row1 = mysqli_fetch_assoc($run1)) {
                             ?>
-                        </tbody>
-                    </table>
 
-                    <?php
-                } else {
-                    ?>
-                    <div class="container d-flex justify-content-center vh-100">
-                        <div class="row">
-                            <div class="col text-center">
-                                <h4>No Notes Found</h4>
-                            </div>
+                            <tr>
+                                <th scope="row" style="width: 10%; text-align: center;">
+                                    <?php echo $count1 ?>
+                                </th>
+
+                                <td style="width: 70%">
+                                    <?php echo $row1['note'] ?>
+                                </td>
+
+                                <td style="width: 20%">
+                                    <form method="POST" action="" align="center">
+                                        <input type="hidden" name="note_id" value="<?php echo $row1['id']; ?>">
+                                        <button type="submit" name="update" class="btn btn-secondary"><i
+                                                class="fa-solid fa-pen"></i></button>
+                                        <button type="submit" name="delete" class="btn btn-danger"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                            <?php
+                            $count1++;
+                        }
+                        ?>
+                    </tbody>
+                </table>
+
+                <?php
+            } else {
+                ?>
+                <div class="container d-flex justify-content-center vh-100">
+                    <div class="row">
+                        <div class="col text-center">
+                            <h4>No Notes Found</h4>
                         </div>
                     </div>
+                </div>
 
-                    <?php
-                }
-                ?>
-            </ul>
+                <?php
+            }
+            ?>
         </div>
     </div>
 
@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Assuming $conn is your database connection object
         $note = $_POST['notes'];
 
-        $sql = "INSERT INTO notes(note) VALUES('$note')";
+        $sql = "INSERT INTO notes(note, user_id) VALUES('$note', $user_id)";
 
         $run = mysqli_query($conn, $sql);
 

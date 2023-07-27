@@ -4,10 +4,11 @@ include './db_connect/connect.php';
 
 <?php
 $id = $_GET['note_id'];
-$sql = "SELECT note from notes WHERE id=$id";
+echo $id;
+$sql = "SELECT note,user_id from notes WHERE id=$id";
 $run = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($run);
-
+$user_id = $row['user_id'];
 ?>
 
 <!doctype html>
@@ -56,7 +57,7 @@ if (isset($_POST['update'])) {
     if ($run) {
         ?>
         <script>
-            window.location.href = "http://localhost/todo_list/index.php";
+            window.location.href = "http://localhost/todo_list/index.php?user_id=<?php echo $id; ?>";
         </script>
 
         <?php
